@@ -8,11 +8,12 @@ thisAddon = xbmcaddon.Addon()
 common.plugin = thisAddon.getAddonInfo('name')
 baseUrl = 'http://tfc.tv'
 cookie = ".TFCTV=FC975A5A90151CFA2868D70BFE9F11FF5A00DE0B9736C6984A03C7E28DEEC56532A4978761CEF1AACDE5F278A0B444A3961D3D81B5029C14C65DCDFBEB81BC1FF0C669F31D555134507341151FACCAAC8895AD024E73DC55EEEED662F4B7B4A901E177935120F1E21E58C0781A8A77108297652AB2006C60675EFA78ED12695443DFA564B03A03E253A037A3E781A897D6557A1D31DFC26315F5268ED84A6C5932361AF088D1CBA7A607050F8D687AF7E8546418; __cfduid=da4d1f6d98f59b1fb5227928c9061d76b1481312063; optimizelyEndUserId=oeu1481312063875r0.6144768789276718; __gads=ID=9be238905ef96833:T=1481312064:S=ALNI_MbXONQz3_1koOfFaLgFvLV_mBsW9A; regcook=274fa181-bad2-4099-af5f-fb383a56491a; __RequestVerificationToken=zrCszCF8No0H4ZR7nflRkEsEcQ4EYrNof73LZXyontCvUX5onfnZ8qq3hk90feGll1hRzQOXRsrQtYT4SWTEd_wZic8QSQDJTafccROW1kBcJ_qNWRds391DFH0lmx6CChrTTQ2; rcDate=Fri, 09 Dec 2016 20:35:37 GMT; glt_2_6Y5KLYxUvG2qbK6AoEjHQIISiJvj99Li5cluBktSMTIrFPU2T3DRC8Iz_r0xRiNE=LT3_DjgKcci_q5RhQPypQpTVB_1AgGo67m2ERZcXxNKBYJ0%7CUUID%3Dc81a1a1dffb641749c603b817168a4b8; optmzl=3; optimizelySegments=%7B%221755021167%22%3A%22false%22%2C%221766442549%22%3A%22direct%22%2C%221774641359%22%3A%22gc%22%7D; optimizelyBuckets=%7B%7D; _ceg.s=ohxqxk; _ceg.u=ohxqxk; _dc_gtm_UA-2265816-2=1; _ga=GA1.2.658898550.1481312065; _em_t=true; _em_vt=42afcb0ba1527f919b1733ab7a6a584b07411f1340-25949054584b1799; _em_v=7d29cbe57b2b1de31b12d5926127584b14fe6e6b81-40934826584b1799" 
+
 # common.dbg = True # Default
 # common.dbglevel = 3 # Default
 
 def showCategories():
-    checkAccountChange()
+    # checkAccountChange()
     categories = [
         # { 'name' : 'Subscribed Shows', 'url' : 'SubscribedShows', 'mode' : 10 }, #hide subscribed shows while we're having issues with the tfc.tv changes
         { 'name' : 'Shows', 'url' : '/Category/Shows', 'mode' : 1 },
@@ -295,7 +296,6 @@ def callServiceApi(path, params = {}, headers = [], base_url = baseUrl):
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookieJar))
     headers.append(('User-Agent', userAgent))
     headers.append(('Cookie', cookie))
-
     opener.addheaders = headers
     if params:
         data_encoded = urllib.urlencode(params)
@@ -306,13 +306,13 @@ def callServiceApi(path, params = {}, headers = [], base_url = baseUrl):
 
 def login():
     cookieJar.clear()
-    login_page = callServiceApi("/User/Login")
-    form_login = common.parseDOM(login_page, "form", attrs = {'id' : 'form_login'})
-    request_verification_token = common.parseDOM(form_login[0], "input", attrs = {'name' : '__RequestVerificationToken'}, ret = 'value')
-    emailAddress = thisAddon.getSetting('emailAddress')
-    password = thisAddon.getSetting('password')
-    formdata = { "login_email" : emailAddress, "login_pass": password, '__RequestVerificationToken' : request_verification_token[0] }
-    callServiceApi("/User/_Login", formdata, headers = [('Referer', 'http://tfc.tv/User/Login')], base_url = 'https://tfc.tv')
+    # login_page = callServiceApi("/User/Login")
+    # form_login = common.parseDOM(login_page, "form", attrs = {'id' : 'form_login'})
+    # request_verification_token = common.parseDOM(form_login[0], "input", attrs = {'name' : '__RequestVerificationToken'}, ret = 'value')
+    # emailAddress = thisAddon.getSetting('emailAddress')
+    # password = thisAddon.getSetting('password')
+    # formdata = { "login_email" : emailAddress, "login_pass": password, '__RequestVerificationToken' : request_verification_token[0] }
+    callServiceApi("/User/_Login")
     # loginData = json.loads(jsonData)
     # if (not loginData) or (loginData and loginData.has_key('errorCode') and loginData['errorCode'] != 0):
         # xbmc.executebuiltin('Notification(%s, %s)' % ('Login Error', loginData['errorMessage'] if loginData.has_key('errorMessage') else 'Could not login'))
@@ -380,16 +380,16 @@ userAgent = 'Mozilla/5.0(iPad; U; CPU OS 4_3 like Mac OS X; en-us) AppleWebKit/5
 cookieJar = cookielib.CookieJar()
 cookieFile = ''
 cookieJarType = ''
-if os.path.exists(xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))):
-    cookieFile = os.path.join(xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile')), 'tfctv.cookie')
-    cookieJar = cookielib.LWPCookieJar(cookieFile)
-    cookieJarType = 'LWPCookieJar'
-if cookieJarType == 'LWPCookieJar':
-    try:
-        cookieJar.load()
-    except:
-        login()
-
+# if os.path.exists(xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))):
+#     cookieFile = os.path.join(xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile')), 'tfctv.cookie')
+#     cookieJar = cookielib.LWPCookieJar(cookieFile)
+#     cookieJarType = 'LWPCookieJar'
+# if cookieJarType == 'LWPCookieJar':
+#     try:
+#         cookieJar.load()
+#     except:
+#         login()
+callServiceApi('/Category/List/1962')
 params=getParams()
 url=None
 name=None
